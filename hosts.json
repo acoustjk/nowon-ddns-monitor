@@ -1,0 +1,338 @@
+[
+  {
+    "id": "host-1",
+    "name": "월계역 2번출구",
+    "host": "ssvnowon101.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-2",
+    "name": "재현중학교 앞",
+    "host": "ssvnowon102.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-3",
+    "name": "재현중학교 앞",
+    "host": "ssvnowon102.iptime.org",
+    "port": 554,
+    "group": "RTSP(554)",
+    "memo": ""
+  },
+  {
+    "id": "host-4",
+    "name": "상계금호어울림아파트",
+    "host": "ssvnowon103.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-5",
+    "name": "상계금호어울림아파트",
+    "host": "ssvnowon103.iptime.org",
+    "port": 554,
+    "group": "RTSP(554)",
+    "memo": ""
+  },
+  {
+    "id": "host-6",
+    "name": "상계금호어울림아파트",
+    "host": "ssvnowon104.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-7",
+    "name": "상계요양병원",
+    "host": "ssvnowon105.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-8",
+    "name": "월계동 534-72",
+    "host": "ssvnowon106.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-9",
+    "name": "월계동 534-72",
+    "host": "ssvnowon106.iptime.org",
+    "port": 554,
+    "group": "RTSP(554)",
+    "memo": ""
+  },
+  {
+    "id": "host-10",
+    "name": "광운로 17길 46",
+    "host": "ssvnowon107.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-11",
+    "name": "광운로 17길 46",
+    "host": "ssvnowon107.iptime.org",
+    "port": 554,
+    "group": "RTSP(554)",
+    "memo": ""
+  },
+  {
+    "id": "host-12",
+    "name": "상계동 77-4",
+    "host": "ssvnowon108.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-13",
+    "name": "상계동 77-4",
+    "host": "ssvnowon108.iptime.org",
+    "port": 554,
+    "group": "RTSP(554)",
+    "memo": ""
+  },
+  {
+    "id": "host-14",
+    "name": "상계동 71-243",
+    "host": "ssvnowon109.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-15",
+    "name": "상계동 71-243",
+    "host": "ssvnowon112.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-16",
+    "name": "상계동 71-243",
+    "host": "ssvnowon112.iptime.org",
+    "port": 554,
+    "group": "RTSP(554)",
+    "memo": ""
+  },
+  {
+    "id": "host-17",
+    "name": "초안산생태터널 1",
+    "host": "ssvnowon110.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "host-18",
+    "name": "초안산생태터널 2",
+    "host": "ssvnowon014.iptime.org",
+    "port": 8081,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "host-19",
+    "name": "초안산생태터널 3",
+    "host": "ssvnowon014.iptime.org",
+    "port": 8083,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "host-20",
+    "name": "덕릉로 중부1",
+    "host": "nw0001.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-21",
+    "name": "덕릉로 상부",
+    "host": "nw0002.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-22",
+    "name": "덕릉로 중부2",
+    "host": "nw00003.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-23",
+    "name": "덕릉로 하부",
+    "host": "nw00004.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-24",
+    "name": "상계동 산145-17",
+    "host": "nw010.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-25",
+    "name": "상계동 산145-17",
+    "host": "nw011.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-26",
+    "name": "수락산로 터널",
+    "host": "suraksan1.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-27",
+    "name": "수락산로 꽃집앞",
+    "host": "suraksan2.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-28",
+    "name": "염불사 중부",
+    "host": "suraksan3.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-29",
+    "name": "염불사 상부",
+    "host": "suraksan4.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-30",
+    "name": "덕암초 상부",
+    "host": "deokam01.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-31",
+    "name": "덕암초 중부",
+    "host": "deokam02.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-32",
+    "name": "덕암초 하부",
+    "host": "deokam03.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-33",
+    "name": "광운대 상부",
+    "host": "ssvnowon131.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-34",
+    "name": "광운대 하부",
+    "host": "ssvnowon132.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-35",
+    "name": "덕릉로 118길 1",
+    "host": "ssvnowon146.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-36",
+    "name": "덕릉로 118길 2",
+    "host": "ssvnowon145.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-37",
+    "name": "광운로 17길",
+    "host": "ssvnowon144.iptime.org",
+    "port": 8081,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "host-38",
+    "name": "동일로 241길 23",
+    "host": "ssvnowon143.iptime.org",
+    "port": 8083,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "host-39",
+    "name": "동일로241길 11",
+    "host": "ssvnowon142.iptime.org",
+    "port": 8082,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "host-40",
+    "name": "동일로 1649",
+    "host": "ssvnowon141.iptime.org",
+    "port": 8081,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "host-41",
+    "name": "청암아파트",
+    "host": "ssvnowon151.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "host-42",
+    "name": "석계역 15길",
+    "host": "ssvnowon161.iptime.org",
+    "port": 554,
+    "group": "RTSP(554)",
+    "memo": ""
+  }
+]

@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DDNS & 포트 통합 관리 대시보드</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-hover: #263449;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-sub: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.14);
+      --yellow: #f59e0b;
+      --yellow-bg: rgba(245, 158, 11, 0.14);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.16);
+      --gray-bg: rgba(148, 163, 184, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', '맑은 고딕', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px 24px 60px;
+    }
+
+    .container {
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .title-area h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-area p {
+      font-size: 0.875rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button, select, input {
+      font-family: inherit;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 15px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--panel-hover);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-danger {
+      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+
+    .btn-danger:hover {
+      background: var(--red-bg);
+    }
+
+    .btn-sm {
+      padding: 4px 9px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+    }
+
+    /* Summary Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease;
+    }
+
+    .stat-card:hover {
+      border-color: #475569;
+      transform: translateY(-1px);
+    }
+
+    .stat-card.active-filter {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
+
+    .stat-badge {
+      width: 48px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    /* Filter & Toolbar */
+    .toolbar {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      min-width: 280px;
+    }
+
+    .search-input:focus, .select-box:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .select-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Table View */
+    .table-wrap {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(15, 23, 42, 0.5);
+      color: var(--text-sub);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    tr.row-offline td {
+      background: rgba(239, 68, 68, 0.06);
+    }
+
+    /* Status Pill */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .status-online {
+      background: var(--green-bg);
+      color: #34d399;
+    }
+    .status-online .dot {
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .status-slow {
+      background: var(--yellow-bg);
+      color: #fbbf24;
+    }
+    .status-slow .dot {
+      background: #f59e0b;
+    }
+
+    .status-offline {
+      background: var(--red-bg);
+      color: #f87171;
+    }
+    .status-offline .dot {
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+    }
+
+    .status-pending {
+      background: var(--gray-bg);
+      color: var(--text-sub);
+    }
+    .status-pending .dot {
+      background: #64748b;
+    }
+
+    .port-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .port-web {
+      background: rgba(59, 130, 246, 0.16);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+    }
+
+    .port-rtsp {
+      background: rgba(168, 85, 247, 0.16);
+      color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+    }
+
+    .host-code {
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #e2e8f0;
+      font-size: 0.88rem;
+    }
+
+    .ip-code {
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: var(--text-sub);
+      font-size: 0.82rem;
+    }
+
+    .ms-fast { color: #34d399; font-weight: 700; }
+    .ms-mid { color: #fbbf24; font-weight: 700; }
+    .ms-slow { color: #f87171; font-weight: 700; }
+
+    /* Compact Card Grid View */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+      gap: 12px;
+    }
+
+    .host-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 5px solid #64748b;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: transform 0.12s ease;
+    }
+
+    .host-card.card-online { border-left-color: var(--green); }
+    .host-card.card-slow { border-left-color: var(--yellow); }
+    .host-card.card-offline {
+      border-left-color: var(--red);
+      background: rgba(239, 68, 68, 0.07);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      word-break: break-all;
+    }
+
+    .card-memo {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      min-height: 1.2em;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(51, 65, 85, 0.5);
+      font-size: 0.78rem;
+      color: var(--text-sub);
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 620px;
+      padding: 24px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal h2 {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    textarea.form-control {
+      min-height: 260px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .help-box {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      color: #bfdbfe;
+      margin-bottom: 12px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 상단 헤더 -->
+    <div class="header">
+      <div class="title-area">
+        <h1>
+          <span>🌐 노원 DDNS & 포트 통합 관리 대시보드</span>
+        </h1>
+        <p id="lastCheckedText">전체 42개 지점(웹 80/808x 및 RTSP 554 포트) 실시간 측정 중...</p>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" id="pingAllBtn" onclick="pingAll()">
+          <span>⚡ 전체 Ping / 포트 측정</span>
+        </button>
+
+        <select class="select-box" id="autoRefreshSelect" onchange="updateAutoRefresh()">
+          <option value="0">⏱ 자동 갱신: 끄기</option>
+          <option value="15">⏱ 자동 갱신: 15초마다</option>
+          <option value="30">⏱ 자동 갱신: 30초마다</option>
+          <option value="60">⏱ 자동 갱신: 1분마다</option>
+          <option value="300">⏱ 자동 갱신: 5분마다</option>
+        </select>
+
+        <button class="btn" onclick="openAddModal()">➕ 개별 추가</button>
+        <button class="btn" onclick="openBulkModal()">📋 엑셀 일괄 붙여넣기/편집</button>
+        <button class="btn" onclick="exportCSV()">📥 엑셀(CSV) 저장</button>
+      </div>
+    </div>
+
+    <!-- 요약 카드 (클릭 시 필터링) -->
+    <div class="stats-grid">
+      <div class="stat-card active-filter" id="card-all" onclick="setStatusFilter('ALL')">
+        <div>
+          <div class="stat-label">전체 등록 항목</div>
+          <div class="stat-value" id="statTotal">0</div>
+        </div>
+        <div class="stat-badge" style="background: rgba(59,130,246,0.15); color: #60a5fa;">전체</div>
+      </div>
+
+      <div class="stat-card" id="card-online" onclick="setStatusFilter('ONLINE')">
+        <div>
+          <div class="stat-label">정상 연결 (포트 열림)</div>
+          <div class="stat-value" style="color: #34d399;" id="statOnline">0</div>
+        </div>
+        <div class="stat-badge" style="background: var(--green-bg); color: #34d399;">정상</div>
+      </div>
+
+      <div class="stat-card" id="card-offline" onclick="setStatusFilter('OFFLINE')">
+        <div>
+          <div class="stat-label">오프라인 (점검 필요)</div>
+          <div class="stat-value" style="color: #f87171;" id="statOffline">0</div>
+        </div>
+        <div class="stat-badge" style="background: var(--red-bg); color: #f87171;">끊김</div>
+      </div>
+
+      <div class="stat-card" style="cursor: default;">
+        <div>
+          <div class="stat-label">평균 응답 속도</div>
+          <div class="stat-value" style="color: #fbbf24;" id="statAvgMs">- ms</div>
+        </div>
+        <div class="stat-badge" style="background: var(--yellow-bg); color: #fbbf24;">속도</div>
+      </div>
+    </div>
+
+    <!-- 검색 및 보기 툴바 -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="🔍 명칭(월계역, 상계동 등), DDNS 주소, 포트, 메모 검색..."
+          oninput="render()"
+        />
+
+        <select class="select-box" id="portFilter" onchange="render()">
+          <option value="ALL">모든 포트 보기</option>
+          <option value="WEB">웹 포트만 (80, 8080~8083)</option>
+          <option value="554">RTSP 영상 포트만 (554)</option>
+        </select>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="offlineFirstCheck" checked onchange="render()" />
+          <span>오프라인(끊김) 최상단 정렬</span>
+        </label>
+      </div>
+
+      <div class="toolbar-right">
+        <button class="btn btn-sm" id="viewModeBtn" onclick="toggleViewMode()">
+          🎛 보기 전환: 바둑판(한눈에 보기) 모드
+        </button>
+      </div>
+    </div>
+
+    <!-- 메인 목록 영역 -->
+    <div id="contentArea"></div>
+  </div>
+
+  <!-- 개별 추가/수정 모달 -->
+  <div class="modal-backdrop" id="itemModal">
+    <div class="modal">
+      <h2 id="itemModalTitle">DDNS 항목 추가</h2>
+      <input type="hidden" id="editItemId" />
+
+      <div class="form-group">
+        <label>명칭 (장소 이름) *</label>
+        <input type="text" id="inputName" class="form-control" placeholder="예: 월계역 2번출구" />
+      </div>
+
+      <div class="form-group">
+        <label>DDNS 주소 *</label>
+        <input type="text" id="inputHost" class="form-control" placeholder="예: ssvnowon101.iptime.org" />
+      </div>
+
+      <div class="form-group">
+        <label>포트 번호 (예: 80, 554, 8080)</label>
+        <input type="number" id="inputPort" class="form-control" placeholder="예: 80" />
+      </div>
+
+      <div class="form-group">
+        <label>메모 (선택)</label>
+        <input type="text" id="inputMemo" class="form-control" placeholder="예: 현장 점검 필요 / 특이사항 메모" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('itemModal')">취소</button>
+        <button class="btn btn-primary" onclick="saveSingleItem()">저장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 일괄 붙여넣기/편집 모달 -->
+  <div class="modal-backdrop" id="bulkModal">
+    <div class="modal" style="max-width: 780px;">
+      <h2>📋 엑셀 목록 일괄 붙여넣기 / 편집</h2>
+      <div class="help-box">
+        💡 <b>엑셀에서 [명칭 | ddns 주소 | 포트] 열을 드래그해서 그대로 복사(Ctrl+C) 후 붙여넣기(Ctrl+V) 하세요!</b><br/>
+        • 탭(엑셀 복사) 또는 쉼표(<code>,</code>) 구분 모두 자동 인식됩니다.<br/>
+        • 형식: <code>명칭, ddns주소, 포트, 메모(선택)</code>
+      </div>
+
+      <div class="form-group">
+        <textarea id="bulkTextarea" class="form-control"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('bulkModal')">취소</button>
+        <button class="btn btn-primary" onclick="saveBulkItems()">일괄 저장 및 전체 Ping 실행</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let hosts = [];
+    let pingResults = {};
+    let statusFilter = 'ALL'; // ALL, ONLINE, OFFLINE
+    let viewMode = 'TABLE'; // TABLE or GRID
+    let autoRefreshTimer = null;
+    let isPinging = false;
+
+    async function init() {
+      await fetchHosts();
+      render();
+      if (hosts.length > 0) {
+        pingAll();
+      }
+    }
+
+    async function fetchHosts() {
+      const res = await fetch('/api/hosts');
+      const data = await res.json();
+      hosts = data.hosts || [];
+    }
+
+    async function saveHostsToServer(newHosts) {
+      hosts = newHosts;
+      await fetch('/api/hosts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hosts })
+      });
+      render();
+    }
+
+    async function pingAll(specificIds = null) {
+      if (isPinging && !specificIds) return;
+      const btn = document.getElementById('pingAllBtn');
+      if (!specificIds) {
+        isPinging = true;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> <span>42개 동시 측정 중...</span>';
+      }
+
+      try {
+        const res = await fetch('/api/ping', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids: specificIds })
+        });
+        const data = await res.json();
+        if (data.results) {
+          Object.assign(pingResults, data.results);
+        }
+        if (data.checkedAt && !specificIds) {
+          document.getElementById('lastCheckedText').textContent =
+            `마지막 전체 측정: ${data.checkedAt} (총 ${hosts.length}개 항목 동시 측정 완료)`;
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (!specificIds) {
+          isPinging = false;
+          btn.disabled = false;
+          btn.innerHTML = '<span>⚡ 전체 Ping / 포트 측정</span>';
+        }
+        render();
+      }
+    }
+
+    function updateAutoRefresh() {
+      const sec = parseInt(document.getElementById('autoRefreshSelect').value, 10);
+      if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+        autoRefreshTimer = null;
+      }
+      if (sec > 0) {
+        autoRefreshTimer = setInterval(() => {
+          pingAll();
+        }, sec * 1000);
+      }
+    }
+
+    function setStatusFilter(filter) {
+      statusFilter = filter;
+      document.getElementById('card-all').classList.toggle('active-filter', filter === 'ALL');
+      document.getElementById('card-online').classList.toggle('active-filter', filter === 'ONLINE');
+      document.getElementById('card-offline').classList.toggle('active-filter', filter === 'OFFLINE');
+      render();
+    }
+
+    function toggleViewMode() {
+      viewMode = viewMode === 'TABLE' ? 'GRID' : 'TABLE';
+      const btn = document.getElementById('viewModeBtn');
+      btn.textContent = viewMode === 'TABLE'
+        ? '🎛 보기 전환: 바둑판(한눈에 보기) 모드'
+        : '🎛 보기 전환: 표(테이블) 모드';
+      render();
+    }
+
+    function updateStats() {
+      const total = hosts.length;
+      let online = 0;
+      let offline = 0;
+      let msSum = 0;
+      let msCount = 0;
+
+      hosts.forEach(h => {
+        const r = pingResults[h.id];
+        if (!r) return;
+        if (r.online) {
+          online++;
+          if (typeof r.ms === 'number') {
+            msSum += r.ms;
+            msCount++;
+          }
+        } else {
+          offline++;
+        }
+      });
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statOnline').textContent = online;
+      document.getElementById('statOffline').textContent = offline;
+      document.getElementById('statAvgMs').textContent = msCount > 0 ? Math.round(msSum / msCount) + ' ms' : '- ms';
+    }
+
+    function getFilteredHosts() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const portFilter = document.getElementById('portFilter').value;
+      const offlineFirst = document.getElementById('offlineFirstCheck').checked;
+
+      let list = hosts.filter(h => {
+        const r = pingResults[h.id];
+        if (statusFilter === 'ONLINE' && (!r || !r.online)) return false;
+        if (statusFilter === 'OFFLINE' && (!r || r.online)) return false;
+
+        if (portFilter === '554' && Number(h.port) !== 554) return false;
+        if (portFilter === 'WEB' && Number(h.port) === 554) return false;
+
+        if (q) {
+          const hay = `${h.name || ''} ${h.host || ''} ${h.port || ''} ${h.memo || ''} ${(r && r.ip) || ''}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      if (offlineFirst) {
+        list.sort((a, b) => {
+          const ra = pingResults[a.id];
+          const rb = pingResults[b.id];
+          const aOff = ra && !ra.online ? 0 : 1;
+          const bOff = rb && !rb.online ? 0 : 1;
+          return aOff - bOff;
+        });
+      }
+      return list;
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function isWebPort(port) {
+      const p = Number(port);
+      return p === 80 || p === 443 || (p >= 8000 && p <= 8999);
+    }
+
+    function render() {
+      updateStats();
+      const list = getFilteredHosts();
+      const container = document.getElementById('contentArea');
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="table-wrap" style="padding: 48px; text-align: center; color: var(--text-sub);">
+            조건에 맞는 항목이 없습니다.
+          </div>
+        `;
+        return;
+      }
+
+      if (viewMode === 'GRID') {
+        renderGrid(list, container);
+      } else {
+        renderTable(list, container);
+      }
+    }
+
+    function renderTable(list, container) {
+      let rowsHtml = list.map((h, idx) => {
+        const r = pingResults[h.id];
+        let pillHtml = `<span class="status-pill status-pending"><span class="dot"></span>측정중</span>`;
+        let icmpBadge = `<span style="color:var(--text-sub);">-</span>`;
+        let msHtml = `-`;
+        let ipHtml = `-`;
+        let rowClass = '';
+
+        const portNum = h.port ? Number(h.port) : null;
+        const portBadgeClass = portNum === 554 ? 'port-rtsp' : 'port-web';
+        const portLabel = portNum === 554 ? `554 (RTSP)` : (portNum ? `${portNum} (웹)` : 'PING');
+
+        if (r) {
+          ipHtml = `<span class="ip-code">${escapeHtml(r.ip || '-')}</span>`;
+          if (r.icmpOnline) {
+            icmpBadge = `<span style="color:#34d399; font-weight:600; font-size:0.82rem;">O (${r.icmpMs || 1}ms)</span>`;
+          } else {
+            icmpBadge = `<span style="color:#94a3b8; font-size:0.82rem;">X (무응답/차단)</span>`;
+          }
+
+          if (r.online) {
+            const isSlow = r.ms >= 150;
+            pillHtml = `<span class="status-pill ${isSlow ? 'status-slow' : 'status-online'}"><span class="dot"></span>포트 열림</span>`;
+            const msClass = r.ms < 60 ? 'ms-fast' : (r.ms < 150 ? 'ms-mid' : 'ms-slow');
+            msHtml = `<span class="${msClass}">${r.ms} ms</span>`;
+          } else {
+            rowClass = 'row-offline';
+            pillHtml = `<span class="status-pill status-offline"><span class="dot"></span>오프라인</span>`;
+            msHtml = `<span style="color:#f87171; font-size:0.82rem;">${escapeHtml(r.error || '연결 실패')}</span>`;
+          }
+        }
+
+        const webUrl = isWebPort(portNum)
+          ? `http://${h.host}${portNum && portNum !== 80 ? ':' + portNum : ''}`
+          : null;
+
+        return `
+          <tr class="${rowClass}">
+            <td style="color:var(--text-sub); width: 44px;">${idx + 1}</td>
+            <td>${pillHtml}</td>
+            <td><div style="font-weight: 700;">${escapeHtml(h.name)}</div></td>
+            <td>
+              <span class="host-code">${escapeHtml(h.host)}</span>
+            </td>
+            <td>
+              <span class="port-badge ${portBadgeClass}">${portLabel}</span>
+            </td>
+            <td>${ipHtml}</td>
+            <td>${msHtml}</td>
+            <td>${icmpBadge}</td>
+            <td style="color: var(--text-sub); max-width: 220px;">${escapeHtml(h.memo || '')}</td>
+            <td style="white-space: nowrap;">
+              ${webUrl ? `<a class="btn btn-sm" href="${escapeHtml(webUrl)}" target="_blank" title="웹 브라우저로 장비 접속">🔗 웹접속</a>` : ''}
+              <button class="btn btn-sm" onclick="pingAll(['${h.id}'])" title="이 항목만 다시 테스트">🔄</button>
+              <button class="btn btn-sm" onclick="openEditModal('${h.id}')">✏️</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('${h.id}')">🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>포트 상태</th>
+                <th>명칭 (장소)</th>
+                <th>DDNS 주소</th>
+                <th>포트</th>
+                <th>현재 공인 IP</th>
+                <th>포트 응답속도</th>
+                <th>공유기 Ping</th>
+                <th>메모</th>
+                <th>관리 / 접속</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderGrid(list, container) {
+      let cardsHtml = list.map(h => {
+        const r = pingResults[h.id];
+        let cardClass = '';
+        let statusBadge = `<span class="status-pill status-pending"><span class="dot"></span>대기</span>`;
+        let subText = '-';
+
+        const portNum = h.port ? Number(h.port) : null;
+        const webUrl = isWebPort(portNum)
+          ? `http://${h.host}${portNum && portNum !== 80 ? ':' + portNum : ''}`
+          : null;
+
+        if (r) {
+          if (r.online) {
+            cardClass = r.ms >= 150 ? 'card-slow' : 'card-online';
+            statusBadge = `<span class="status-pill ${r.ms >= 150 ? 'status-slow' : 'status-online'}"><span class="dot"></span>${r.ms}ms</span>`;
+            subText = `${r.ip}`;
+          } else {
+            cardClass = 'card-offline';
+            statusBadge = `<span class="status-pill status-offline"><span class="dot"></span>끊김</span>`;
+            subText = r.error || '연결 실패';
+          }
+        }
+
+        return `
+          <div class="host-card ${cardClass}">
+            <div class="card-top">
+              <div>
+                <div class="card-title">${escapeHtml(h.name)} <span style="font-size:0.78rem; color:#93c5fd;">:${h.port || '-'}</span></div>
+                <div class="host-code" style="font-size:0.78rem; color:var(--text-sub);">${escapeHtml(h.host)}</div>
+              </div>
+              ${statusBadge}
+            </div>
+            <div class="card-memo">${escapeHtml(h.memo || '')}</div>
+            <div class="card-bottom">
+              <span class="ip-code">${escapeHtml(subText)}</span>
+              <div style="display:flex; gap:4px;">
+                ${webUrl ? `<a class="btn btn-sm" href="${escapeHtml(webUrl)}" target="_blank">🔗</a>` : ''}
+                <button class="btn btn-sm" onclick="pingAll(['${h.id}'])">🔄</button>
+                <button class="btn btn-sm" onclick="openEditModal('${h.id}')">✏️</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = `<div class="cards-grid">${cardsHtml}</div>`;
+    }
+
+    /* 모달 제어 */
+    function openAddModal() {
+      document.getElementById('itemModalTitle').textContent = 'DDNS 항목 추가';
+      document.getElementById('editItemId').value = '';
+      document.getElementById('inputName').value = '';
+      document.getElementById('inputHost').value = '';
+      document.getElementById('inputPort').value = '80';
+      document.getElementById('inputMemo').value = '';
+      document.getElementById('itemModal').classList.add('open');
+      document.getElementById('inputName').focus();
+    }
+
+    function openEditModal(id) {
+      const item = hosts.find(h => h.id === id);
+      if (!item) return;
+      document.getElementById('itemModalTitle').textContent = 'DDNS 항목 수정';
+      document.getElementById('editItemId').value = item.id;
+      document.getElementById('inputName').value = item.name || '';
+      document.getElementById('inputHost').value = item.host || '';
+      document.getElementById('inputPort').value = item.port || '';
+      document.getElementById('inputMemo').value = item.memo || '';
+      document.getElementById('itemModal').classList.add('open');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('open');
+    }
+
+    async function saveSingleItem() {
+      const id = document.getElementById('editItemId').value;
+      const name = document.getElementById('inputName').value.trim();
+      const host = document.getElementById('inputHost').value.trim();
+      const portRaw = document.getElementById('inputPort').value.trim();
+      const memo = document.getElementById('inputMemo').value.trim();
+      const port = portRaw && !isNaN(portRaw) ? Number(portRaw) : null;
+
+      if (!host) {
+        alert('DDNS 주소를 입력해 주세요.');
+        return;
+      }
+
+      const finalName = name || host;
+      let targetId = id;
+
+      if (id) {
+        hosts = hosts.map(h => h.id === id ? { ...h, name: finalName, host, port, memo } : h);
+      } else {
+        targetId = 'host-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+        hosts.push({ id: targetId, name: finalName, host, port, memo });
+      }
+
+      closeModal('itemModal');
+      await saveHostsToServer(hosts);
+      pingAll([targetId]);
+    }
+
+    async function deleteItem(id) {
+      const item = hosts.find(h => h.id === id);
+      if (!item) return;
+      if (!confirm(`[${item.name} (${item.host}:${item.port || ''})] 항목을 삭제하시겠습니까?`)) return;
+      hosts = hosts.filter(h => h.id !== id);
+      delete pingResults[id];
+      await saveHostsToServer(hosts);
+    }
+
+    function openBulkModal() {
+      const lines = hosts.map(h => {
+        const base = [h.name || '', h.host || '', h.port || ''];
+        if (h.memo) base.push(h.memo);
+        return base.join('\t');
+      });
+      document.getElementById('bulkTextarea').value = lines.join('\n');
+      document.getElementById('bulkModal').classList.add('open');
+    }
+
+    async function saveBulkItems() {
+      const raw = document.getElementById('bulkTextarea').value;
+      const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+      const newHosts = [];
+      lines.forEach((line, index) => {
+        // 첫 줄이 헤더(명칭, ddns 주소, 포트)인 경우 자동 건너뛰기
+        if (index === 0 && line.includes('명칭') && line.toLowerCase().includes('ddns')) {
+          return;
+        }
+        const delimiter = line.includes('\t') ? '\t' : ',';
+        const parts = line.split(delimiter).map(p => p.trim());
+
+        let name = '', host = '', port = 80, memo = '';
+        if (parts.length === 1) {
+          host = parts[0];
+          name = parts[0];
+        } else {
+          name = parts[0] || parts[1];
+          host = parts[1] || parts[0];
+          if (parts[2] && !isNaN(parts[2])) {
+            port = Number(parts[2]);
+          } else {
+            port = null;
+          }
+          memo = parts.slice(3).join(', ') || '';
+        }
+
+        const existing = hosts.find(h => h.host === host && Number(h.port) === Number(port) && h.name === name);
+        newHosts.push({
+          id: existing ? existing.id : `host-${Date.now()}-${index}`,
+          name,
+          host,
+          port,
+          memo
+        });
+      });
+
+      closeModal('bulkModal');
+      await saveHostsToServer(newHosts);
+      pingAll();
+    }
+
+    function exportCSV() {
+      const headers = ['번호', '상태', '명칭', 'DDNS주소', '포트', '현재공인IP', '포트응답속도(ms)', '공유기Ping', '메모', '확인시각'];
+      const rows = hosts.map((h, i) => {
+        const r = pingResults[h.id];
+        const status = r ? (r.online ? '정상(열림)' : '오프라인') : '미측정';
+        const ip = r ? (r.ip || '') : '';
+        const ms = r && r.online ? r.ms : '';
+        const icmp = r ? (r.icmpOnline ? 'O' : 'X') : '';
+        const checkedAt = r ? (r.checkedAt || '') : '';
+        return [
+          i + 1,
+          status,
+          h.name || '',
+          h.host || '',
+          h.port || '',
+          ip,
+          ms,
+          icmp,
+          h.memo || '',
+          checkedAt
+        ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `노원_DDNS_포트현황_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    init();
+  </script>
+</body>
+</html>
