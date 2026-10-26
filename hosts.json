@@ -1,6 +1,7 @@
 [
   {
     "id": "host-1",
+    "region": "노원구",
     "name": "월계역 2번출구",
     "host": "ssvnowon101.iptime.org",
     "port": 80,
@@ -9,6 +10,7 @@
   },
   {
     "id": "host-2",
+    "region": "노원구",
     "name": "재현중학교 앞",
     "host": "ssvnowon102.iptime.org",
     "port": 80,
@@ -17,6 +19,7 @@
   },
   {
     "id": "host-3",
+    "region": "노원구",
     "name": "재현중학교 앞",
     "host": "ssvnowon102.iptime.org",
     "port": 554,
@@ -25,6 +28,7 @@
   },
   {
     "id": "host-4",
+    "region": "노원구",
     "name": "상계금호어울림아파트",
     "host": "ssvnowon103.iptime.org",
     "port": 80,
@@ -33,6 +37,7 @@
   },
   {
     "id": "host-5",
+    "region": "노원구",
     "name": "상계금호어울림아파트",
     "host": "ssvnowon103.iptime.org",
     "port": 554,
@@ -41,6 +46,7 @@
   },
   {
     "id": "host-6",
+    "region": "노원구",
     "name": "상계금호어울림아파트",
     "host": "ssvnowon104.iptime.org",
     "port": 80,
@@ -49,6 +55,7 @@
   },
   {
     "id": "host-7",
+    "region": "노원구",
     "name": "상계요양병원",
     "host": "ssvnowon105.iptime.org",
     "port": 80,
@@ -57,6 +64,7 @@
   },
   {
     "id": "host-8",
+    "region": "노원구",
     "name": "월계동 534-72",
     "host": "ssvnowon106.iptime.org",
     "port": 80,
@@ -65,6 +73,7 @@
   },
   {
     "id": "host-9",
+    "region": "노원구",
     "name": "월계동 534-72",
     "host": "ssvnowon106.iptime.org",
     "port": 554,
@@ -73,6 +82,7 @@
   },
   {
     "id": "host-10",
+    "region": "노원구",
     "name": "광운로 17길 46",
     "host": "ssvnowon107.iptime.org",
     "port": 80,
@@ -81,6 +91,7 @@
   },
   {
     "id": "host-11",
+    "region": "노원구",
     "name": "광운로 17길 46",
     "host": "ssvnowon107.iptime.org",
     "port": 554,
@@ -89,6 +100,7 @@
   },
   {
     "id": "host-12",
+    "region": "노원구",
     "name": "상계동 77-4",
     "host": "ssvnowon108.iptime.org",
     "port": 80,
@@ -97,6 +109,7 @@
   },
   {
     "id": "host-13",
+    "region": "노원구",
     "name": "상계동 77-4",
     "host": "ssvnowon108.iptime.org",
     "port": 554,
@@ -105,6 +118,7 @@
   },
   {
     "id": "host-14",
+    "region": "노원구",
     "name": "상계동 71-243",
     "host": "ssvnowon109.iptime.org",
     "port": 80,
@@ -113,6 +127,7 @@
   },
   {
     "id": "host-15",
+    "region": "노원구",
     "name": "상계동 71-243",
     "host": "ssvnowon112.iptime.org",
     "port": 80,
@@ -121,6 +136,7 @@
   },
   {
     "id": "host-16",
+    "region": "노원구",
     "name": "상계동 71-243",
     "host": "ssvnowon112.iptime.org",
     "port": 554,
@@ -129,6 +145,7 @@
   },
   {
     "id": "host-17",
+    "region": "노원구",
     "name": "초안산생태터널 1",
     "host": "ssvnowon110.iptime.org",
     "port": 8080,
@@ -137,6 +154,7 @@
   },
   {
     "id": "host-18",
+    "region": "노원구",
     "name": "초안산생태터널 2",
     "host": "ssvnowon014.iptime.org",
     "port": 8081,
@@ -145,6 +163,7 @@
   },
   {
     "id": "host-19",
+    "region": "노원구",
     "name": "초안산생태터널 3",
     "host": "ssvnowon014.iptime.org",
     "port": 8083,
@@ -153,6 +172,7 @@
   },
   {
     "id": "host-20",
+    "region": "노원구",
     "name": "덕릉로 중부1",
     "host": "nw0001.iptime.org",
     "port": 80,
@@ -161,6 +181,7 @@
   },
   {
     "id": "host-21",
+    "region": "노원구",
     "name": "덕릉로 상부",
     "host": "nw0002.iptime.org",
     "port": 80,
@@ -169,6 +190,7 @@
   },
   {
     "id": "host-22",
+    "region": "노원구",
     "name": "덕릉로 중부2",
     "host": "nw00003.iptime.org",
     "port": 80,
@@ -177,6 +199,7 @@
   },
   {
     "id": "host-23",
+    "region": "노원구",
     "name": "덕릉로 하부",
     "host": "nw00004.iptime.org",
     "port": 80,
@@ -185,6 +208,7 @@
   },
   {
     "id": "host-24",
+    "region": "노원구",
     "name": "상계동 산145-17",
     "host": "nw010.iptime.org",
     "port": 80,
@@ -193,6 +217,7 @@
   },
   {
     "id": "host-25",
+    "region": "노원구",
     "name": "상계동 산145-17",
     "host": "nw011.iptime.org",
     "port": 80,
@@ -201,6 +226,7 @@
   },
   {
     "id": "host-26",
+    "region": "노원구",
     "name": "수락산로 터널",
     "host": "suraksan1.iptime.org",
     "port": 80,
@@ -209,6 +235,7 @@
   },
   {
     "id": "host-27",
+    "region": "노원구",
     "name": "수락산로 꽃집앞",
     "host": "suraksan2.iptime.org",
     "port": 80,
@@ -217,6 +244,7 @@
   },
   {
     "id": "host-28",
+    "region": "노원구",
     "name": "염불사 중부",
     "host": "suraksan3.iptime.org",
     "port": 80,
@@ -225,6 +253,7 @@
   },
   {
     "id": "host-29",
+    "region": "노원구",
     "name": "염불사 상부",
     "host": "suraksan4.iptime.org",
     "port": 80,
@@ -233,6 +262,7 @@
   },
   {
     "id": "host-30",
+    "region": "노원구",
     "name": "덕암초 상부",
     "host": "deokam01.iptime.org",
     "port": 80,
@@ -241,6 +271,7 @@
   },
   {
     "id": "host-31",
+    "region": "노원구",
     "name": "덕암초 중부",
     "host": "deokam02.iptime.org",
     "port": 80,
@@ -249,6 +280,7 @@
   },
   {
     "id": "host-32",
+    "region": "노원구",
     "name": "덕암초 하부",
     "host": "deokam03.iptime.org",
     "port": 80,
@@ -257,6 +289,7 @@
   },
   {
     "id": "host-33",
+    "region": "노원구",
     "name": "광운대 상부",
     "host": "ssvnowon131.iptime.org",
     "port": 80,
@@ -265,6 +298,7 @@
   },
   {
     "id": "host-34",
+    "region": "노원구",
     "name": "광운대 하부",
     "host": "ssvnowon132.iptime.org",
     "port": 80,
@@ -273,6 +307,7 @@
   },
   {
     "id": "host-35",
+    "region": "노원구",
     "name": "덕릉로 118길 1",
     "host": "ssvnowon146.iptime.org",
     "port": 80,
@@ -281,6 +316,7 @@
   },
   {
     "id": "host-36",
+    "region": "노원구",
     "name": "덕릉로 118길 2",
     "host": "ssvnowon145.iptime.org",
     "port": 80,
@@ -289,6 +325,7 @@
   },
   {
     "id": "host-37",
+    "region": "노원구",
     "name": "광운로 17길",
     "host": "ssvnowon144.iptime.org",
     "port": 8081,
@@ -297,6 +334,7 @@
   },
   {
     "id": "host-38",
+    "region": "노원구",
     "name": "동일로 241길 23",
     "host": "ssvnowon143.iptime.org",
     "port": 8083,
@@ -305,6 +343,7 @@
   },
   {
     "id": "host-39",
+    "region": "노원구",
     "name": "동일로241길 11",
     "host": "ssvnowon142.iptime.org",
     "port": 8082,
@@ -313,6 +352,7 @@
   },
   {
     "id": "host-40",
+    "region": "노원구",
     "name": "동일로 1649",
     "host": "ssvnowon141.iptime.org",
     "port": 8081,
@@ -321,6 +361,7 @@
   },
   {
     "id": "host-41",
+    "region": "노원구",
     "name": "청암아파트",
     "host": "ssvnowon151.iptime.org",
     "port": 80,
@@ -329,10 +370,209 @@
   },
   {
     "id": "host-42",
+    "region": "노원구",
     "name": "석계역 15길",
     "host": "ssvnowon161.iptime.org",
     "port": 554,
     "group": "RTSP(554)",
+    "memo": ""
+  },
+  {
+    "id": "jn-1",
+    "region": "중랑구",
+    "name": "용마산로94길 82-7",
+    "host": "jungnang005.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-2",
+    "region": "중랑구",
+    "name": "면목로30나길19",
+    "host": "jungnang006.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-3",
+    "region": "중랑구",
+    "name": "상봉로18길40",
+    "host": "jungnang007.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-4",
+    "region": "중랑구",
+    "name": "면목로22길32-고정형",
+    "host": "jungnang008.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-5",
+    "region": "중랑구",
+    "name": "사가정로72길26(101동)",
+    "host": "jungnang009.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-6",
+    "region": "중랑구",
+    "name": "봉우재로71길74",
+    "host": "jungnang010.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-7",
+    "region": "중랑구",
+    "name": "동일로126가길10",
+    "host": "jungnang011.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-8",
+    "region": "중랑구",
+    "name": "동일로144길84",
+    "host": "jungnang012.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-9",
+    "region": "중랑구",
+    "name": "동일로144길49",
+    "host": "jungnang013.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-10",
+    "region": "중랑구",
+    "name": "상봉중앙로84길34-4(고정형)",
+    "host": "jungnang014.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-11",
+    "region": "중랑구",
+    "name": "망우로91길 위",
+    "host": "JRCCTVCAM001.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-12",
+    "region": "중랑구",
+    "name": "망우로91길 아래",
+    "host": "JRCCTVCAM002.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-13",
+    "region": "중랑구",
+    "name": "봉우재로 65길 45",
+    "host": "JRCCTVCAM003.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-14",
+    "region": "중랑구",
+    "name": "봉우재로 65길 8",
+    "host": "JRCCTVCAM004.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-15",
+    "region": "중랑구",
+    "name": "용마산로 329-10",
+    "host": "JRCCTVCAM005.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-16",
+    "region": "중랑구",
+    "name": "용마산로 306",
+    "host": "JRCCTVCAM006.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-17",
+    "region": "중랑구",
+    "name": "용마산로 52길 35",
+    "host": "JRCCTVCAM007.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-18",
+    "region": "중랑구",
+    "name": "용마산로 118길 130",
+    "host": "JRCCTVCAM008.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-19",
+    "region": "중랑구",
+    "name": "용마산로 86길 5",
+    "host": "hj2412jr3881.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
+    "memo": ""
+  },
+  {
+    "id": "jn-20",
+    "region": "중랑구",
+    "name": "봉화산로 45길 9-31",
+    "host": "JRCCTVCAM010.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-21",
+    "region": "중랑구",
+    "name": "겸재로 48길 32",
+    "host": "JRCCTVCAM011.iptime.org",
+    "port": 8080,
+    "group": "웹(808x)",
+    "memo": ""
+  },
+  {
+    "id": "jn-22",
+    "region": "중랑구",
+    "name": "면목로22길(쌍용아파트)",
+    "host": "jungnang0208.iptime.org",
+    "port": 80,
+    "group": "웹(80)",
     "memo": ""
   }
 ]

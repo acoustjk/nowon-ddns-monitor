@@ -245,7 +245,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
             results = {}
             if targets:
-                max_workers = min(60, max(10, len(targets)))
+                max_workers = min(80, max(10, len(targets)))
                 with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
                     future_map = {executor.submit(check_single_host, h): h["id"] for h in targets}
                     for future in concurrent.futures.as_completed(future_map):
