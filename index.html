@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>노원 · 중랑 DDNS & 포트 통합 모니터링</title>
+  <title>노원구 · 중랑구 DDNS & 포트 통합 모니터링</title>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <style>
     :root {
@@ -21,6 +21,10 @@
       --primary-hover: #1d4ed8;
       --primary-soft: #eff6ff;
       --primary-border: #bfdbfe;
+
+      --jungnang: #0d9488;
+      --jungnang-soft: #f0fdfa;
+      --jungnang-border: #99f6e4;
 
       --success: #059669;
       --success-dot: #10b981;
@@ -62,7 +66,7 @@
 
     /* 상단 네비게이션 헤더 */
     .top-nav {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       position: sticky;
@@ -162,12 +166,12 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 9px 18px;
-      border-radius: 8px;
+      padding: 10px 20px;
+      border-radius: 9px;
       border: none;
       background: transparent;
       color: var(--text-secondary);
-      font-size: 0.92rem;
+      font-size: 0.94rem;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -185,10 +189,10 @@
     }
 
     .region-count {
-      font-size: 0.76rem;
+      font-size: 0.78rem;
       padding: 2px 8px;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.07);
+      background: rgba(15, 23, 42, 0.08);
       color: inherit;
       font-weight: 700;
     }
@@ -196,6 +200,46 @@
     .region-tab.active .region-count {
       background: rgba(255, 255, 255, 0.22);
       color: #ffffff;
+    }
+
+    /* 구역 섹션 헤더 (노원구 / 중랑구 분리 표시용) */
+    .region-section {
+      margin-bottom: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      border-bottom: none;
+    }
+
+    .section-header.jungnang-header {
+      border-left-color: var(--jungnang);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .section-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
     }
 
     /* 버튼 스타일 */
@@ -480,7 +524,7 @@
     .table-wrap {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
       overflow-x: auto;
       box-shadow: var(--shadow-sm);
     }
@@ -499,6 +543,7 @@
       text-transform: uppercase;
       letter-spacing: 0.02em;
       padding: 13px 16px;
+      border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
     }
@@ -603,9 +648,9 @@
     }
 
     .region-jungnang {
-      background: #f0fdf4;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
+      background: var(--jungnang-soft);
+      color: var(--jungnang);
+      border: 1px solid var(--jungnang-border);
     }
 
     /* 포트 뱃지 */
@@ -675,6 +720,11 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
       gap: 14px;
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     }
 
     .host-card {
@@ -884,15 +934,15 @@
     <div class="region-bar">
       <div class="region-tabs" id="regionTabs">
         <button class="region-tab active" onclick="setRegionFilter('ALL')">
-          <span>🌐 전체 보기</span>
+          <span>📊 노원 · 중랑 구역별 분리 보기</span>
           <span class="region-count" id="count-ALL">0</span>
         </button>
         <button class="region-tab" onclick="setRegionFilter('노원구')">
-          <span>📍 노원구</span>
+          <span>📍 노원구만 보기</span>
           <span class="region-count" id="count-노원구">0</span>
         </button>
         <button class="region-tab" onclick="setRegionFilter('중랑구')">
-          <span>📍 중랑구</span>
+          <span>📍 중랑구만 보기</span>
           <span class="region-count" id="count-중랑구">0</span>
         </button>
       </div>
@@ -959,7 +1009,7 @@
 
         <label class="checkbox-label">
           <input type="checkbox" id="offlineFirstCheck" checked onchange="render()" />
-          <span>오프라인(점검 필요) 최상단 고정</span>
+          <span>각 구역 내 오프라인 최상단 고정</span>
         </label>
       </div>
 
@@ -971,7 +1021,7 @@
       </div>
     </div>
 
-    <!-- 메인 목록 영역 -->
+    <!-- 메인 목록 영역 (노원구 섹션 / 중랑구 섹션 분리 렌더링) -->
     <div id="contentArea"></div>
   </main>
 
@@ -1023,15 +1073,15 @@
       <h2 id="bulkModalTitle">📋 엑셀 목록 일괄 붙여넣기 / 편집</h2>
       <div class="help-box">
         💡 <b>엑셀에서 [명칭 | ddns 주소 | 포트] 또는 [번호 | 명칭 | ddns 주소 | 포트] 열을 드래그해 그대로 붙여넣으세요!</b><br/>
-        • 현재 선택된 지역 탭(노원구 / 중랑구)에 맞춰 일괄 편집할 수 있습니다.<br/>
+        • 노원구와 중랑구 목록을 각각 독립적으로 편집할 수 있습니다.<br/>
         • 형식: <code>명칭 [탭/쉼표] ddns주소 [탭/쉼표] 포트 [탭/쉼표] 메모(선택)</code>
       </div>
 
       <div class="form-group">
         <label>일괄 편집 대상 지역</label>
         <select id="bulkRegionSelect" class="form-control" onchange="populateBulkTextarea()">
-          <option value="노원구">노원구 목록만 편집</option>
-          <option value="중랑구">중랑구 목록만 편집</option>
+          <option value="노원구">📍 노원구 목록 편집</option>
+          <option value="중랑구">📍 중랑구 목록 편집</option>
         </select>
       </div>
 
@@ -1056,6 +1106,15 @@
     let autoRefreshTimer = null;
     let isPinging = false;
 
+    function inferRegion(h) {
+      if (h.region) return h.region;
+      const hostStr = String(h.host || '').toLowerCase();
+      if (hostStr.includes('jungnang') || hostStr.includes('jrcctv') || hostStr.includes('jr3881') || String(h.id || '').startsWith('jn-')) {
+        return '중랑구';
+      }
+      return '노원구';
+    }
+
     async function init() {
       await fetchHosts();
       render();
@@ -1069,7 +1128,7 @@
       const data = await res.json();
       hosts = (data.hosts || []).map(h => ({
         ...h,
-        region: h.region || '노원구'
+        region: inferRegion(h)
       }));
     }
 
@@ -1136,7 +1195,7 @@
       const tabs = document.querySelectorAll('.region-tab');
       tabs.forEach(btn => {
         const isMatch =
-          (region === 'ALL' && btn.textContent.includes('전체')) ||
+          (region === 'ALL' && btn.textContent.includes('분리 보기')) ||
           (region !== 'ALL' && btn.textContent.includes(region));
         btn.classList.toggle('active', isMatch);
       });
@@ -1167,16 +1226,15 @@
     }
 
     function updateStats() {
-      // 지역별 탭 카운트 업데이트
-      const nowonCount = hosts.filter(h => (h.region || '노원구') === '노원구').length;
-      const jungnangCount = hosts.filter(h => h.region === '중랑구').length;
+      const nowonCount = hosts.filter(h => inferRegion(h) === '노원구').length;
+      const jungnangCount = hosts.filter(h => inferRegion(h) === '중랑구').length;
       document.getElementById('count-ALL').textContent = hosts.length;
       document.getElementById('count-노원구').textContent = nowonCount;
       document.getElementById('count-중랑구').textContent = jungnangCount;
 
       const scopedHosts = regionFilter === 'ALL'
         ? hosts
-        : hosts.filter(h => (h.region || '노원구') === regionFilter);
+        : hosts.filter(h => inferRegion(h) === regionFilter);
 
       const total = scopedHosts.length;
       let online = 0;
@@ -1215,13 +1273,13 @@
       }
     }
 
-    function getFilteredHosts() {
+    function getFilteredHostsByRegion(targetRegion) {
       const q = document.getElementById('searchInput').value.trim().toLowerCase();
       const offlineFirst = document.getElementById('offlineFirstCheck').checked;
 
       let list = hosts.filter(h => {
-        const itemRegion = h.region || '노원구';
-        if (regionFilter !== 'ALL' && itemRegion !== regionFilter) return false;
+        const itemRegion = inferRegion(h);
+        if (targetRegion && itemRegion !== targetRegion) return false;
 
         const r = pingResults[h.id];
         if (statusFilter === 'ONLINE' && (!r || !r.online)) return false;
@@ -1264,26 +1322,62 @@
 
     function render() {
       updateStats();
-      const list = getFilteredHosts();
       const container = document.getElementById('contentArea');
+      const regionsToRender = regionFilter === 'ALL' ? ['노원구', '중랑구'] : [regionFilter];
 
-      if (list.length === 0) {
+      let sectionsHtml = '';
+      regionsToRender.forEach(reg => {
+        const list = getFilteredHostsByRegion(reg);
+        if (list.length === 0) return;
+
+        let regOnline = 0;
+        let regOffline = 0;
+        list.forEach(h => {
+          const r = pingResults[h.id];
+          if (r) {
+            if (r.online) regOnline++;
+            else regOffline++;
+          }
+        });
+
+        const isJungnang = reg === '중랑구';
+        const headerClass = isJungnang ? 'section-header jungnang-header' : 'section-header';
+        const badgeClass = isJungnang ? 'region-badge region-jungnang' : 'region-badge region-nowon';
+        const regIdsJson = JSON.stringify(list.map(h => h.id)).replace(/"/g, "'");
+
+        const bodyHtml = viewMode === 'GRID' ? buildGridHtml(list) : buildTableHtml(list);
+
+        sectionsHtml += `
+          <section class="region-section">
+            <div class="${headerClass}">
+              <div class="section-title">
+                <span class="${badgeClass}" style="font-size:0.88rem; padding:4px 10px;">📍 ${escapeHtml(reg)}</span>
+                <span>관할 DDNS 목록 (${list.length}개)</span>
+              </div>
+              <div class="section-badges">
+                <span class="status-pill status-online">정상 ${regOnline}</span>
+                <span class="status-pill status-offline">오프라인 ${regOffline}</span>
+                <button class="btn btn-sm" onclick="pingAll(${regIdsJson})">🔄 ${escapeHtml(reg)}만 재측정</button>
+              </div>
+            </div>
+            ${bodyHtml}
+          </section>
+        `;
+      });
+
+      if (!sectionsHtml) {
         container.innerHTML = `
-          <div class="table-wrap" style="padding: 56px 24px; text-align: center; color: var(--text-secondary);">
+          <div class="table-wrap" style="border-radius: var(--radius-lg); padding: 56px 24px; text-align: center; color: var(--text-secondary);">
             조건에 일치하는 지점이 없습니다. 검색어나 필터를 변경해 보세요.
           </div>
         `;
         return;
       }
 
-      if (viewMode === 'GRID') {
-        renderGrid(list, container);
-      } else {
-        renderTable(list, container);
-      }
+      container.innerHTML = sectionsHtml;
     }
 
-    function renderTable(list, container) {
+    function buildTableHtml(list) {
       let rowsHtml = list.map((h, idx) => {
         const r = pingResults[h.id];
         let pillHtml = `<span class="status-pill status-pending"><span class="dot"></span>측정중</span>`;
@@ -1292,7 +1386,7 @@
         let ipHtml = `-`;
         let rowClass = '';
 
-        const itemRegion = h.region || '노원구';
+        const itemRegion = inferRegion(h);
         const regionBadgeClass = itemRegion === '중랑구' ? 'region-jungnang' : 'region-nowon';
 
         const portNum = h.port ? Number(h.port) : null;
@@ -1345,7 +1439,7 @@
         `;
       }).join('');
 
-      container.innerHTML = `
+      return `
         <div class="table-wrap">
           <table>
             <thead>
@@ -1371,14 +1465,14 @@
       `;
     }
 
-    function renderGrid(list, container) {
-      let cardsHtml = list.map(h => {
+    function buildGridHtml(list) {
+      let cardsHtml = list.map((h, idx) => {
         const r = pingResults[h.id];
         let cardClass = '';
         let statusBadge = `<span class="status-pill status-pending"><span class="dot"></span>대기</span>`;
         let subText = '-';
 
-        const itemRegion = h.region || '노원구';
+        const itemRegion = inferRegion(h);
         const regionBadgeClass = itemRegion === '중랑구' ? 'region-jungnang' : 'region-nowon';
         const portNum = h.port ? Number(h.port) : null;
         const webUrl = isWebPort(portNum)
@@ -1402,7 +1496,7 @@
             <div class="card-top">
               <div>
                 <div style="margin-bottom:4px;">
-                  <span class="region-badge ${regionBadgeClass}" style="font-size:0.72rem; padding:2px 6px;">${escapeHtml(itemRegion)}</span>
+                  <span class="region-badge ${regionBadgeClass}" style="font-size:0.72rem; padding:2px 6px;">${escapeHtml(itemRegion)} #${idx + 1}</span>
                 </div>
                 <div class="card-title">${escapeHtml(h.name)} <span style="font-size:0.8rem; color:var(--primary); font-weight:700;">:${h.port || '-'}</span></div>
                 <div style="margin-top:4px;"><span class="host-code" style="font-size:0.78rem;">${escapeHtml(h.host)}</span></div>
@@ -1422,7 +1516,7 @@
         `;
       }).join('');
 
-      container.innerHTML = `<div class="cards-grid">${cardsHtml}</div>`;
+      return `<div class="cards-grid">${cardsHtml}</div>`;
     }
 
     /* 모달 제어 */
@@ -1443,7 +1537,7 @@
       if (!item) return;
       document.getElementById('itemModalTitle').textContent = 'DDNS 항목 수정';
       document.getElementById('editItemId').value = item.id;
-      document.getElementById('inputRegion').value = item.region || '노원구';
+      document.getElementById('inputRegion').value = inferRegion(item);
       document.getElementById('inputName').value = item.name || '';
       document.getElementById('inputHost').value = item.host || '';
       document.getElementById('inputPort').value = item.port || '';
@@ -1487,7 +1581,7 @@
     async function deleteItem(id) {
       const item = hosts.find(h => h.id === id);
       if (!item) return;
-      if (!confirm(`[${item.region || '노원구'} - ${item.name} (${item.host}:${item.port || ''})] 항목을 삭제하시겠습니까?`)) return;
+      if (!confirm(`[${inferRegion(item)} - ${item.name} (${item.host}:${item.port || ''})] 항목을 삭제하시겠습니까?`)) return;
       hosts = hosts.filter(h => h.id !== id);
       delete pingResults[id];
       await saveHostsToServer(hosts);
@@ -1502,7 +1596,7 @@
 
     function populateBulkTextarea() {
       const targetRegion = document.getElementById('bulkRegionSelect').value;
-      const regionHosts = hosts.filter(h => (h.region || '노원구') === targetRegion);
+      const regionHosts = hosts.filter(h => inferRegion(h) === targetRegion);
       const lines = regionHosts.map(h => {
         const base = [h.name || '', h.host || '', h.port || ''];
         if (h.memo) base.push(h.memo);
@@ -1524,7 +1618,6 @@
         const delimiter = line.includes('\t') ? '\t' : ',';
         let parts = line.split(delimiter).map(p => p.trim());
 
-        // 엑셀 앞에 연번(1, 2, 3...) 열이 포함된 경우 자동 제거
         if (parts.length >= 4 && /^\d+$/.test(parts[0]) && parts[2].includes('.')) {
           parts = parts.slice(1);
         }
@@ -1545,7 +1638,7 @@
         }
 
         const existing = hosts.find(
-          h => (h.region || '노원구') === targetRegion && h.host === host && Number(h.port) === Number(port) && h.name === name
+          h => inferRegion(h) === targetRegion && h.host === host && Number(h.port) === Number(port) && h.name === name
         );
         updatedRegionHosts.push({
           id: existing ? existing.id : `host-${Date.now()}-${index}`,
@@ -1557,7 +1650,7 @@
         });
       });
 
-      const otherHosts = hosts.filter(h => (h.region || '노원구') !== targetRegion);
+      const otherHosts = hosts.filter(h => inferRegion(h) !== targetRegion);
       const mergedHosts = targetRegion === '노원구'
         ? [...updatedRegionHosts, ...otherHosts]
         : [...otherHosts, ...updatedRegionHosts];
@@ -1569,7 +1662,11 @@
 
     function exportCSV() {
       const headers = ['번호', '지역', '상태', '명칭', 'DDNS주소', '포트', '현재공인IP', '포트응답속도(ms)', '공유기Ping', '메모', '확인시각'];
-      const list = getFilteredHosts();
+      const regions = regionFilter === 'ALL' ? ['노원구', '중랑구'] : [regionFilter];
+      let list = [];
+      regions.forEach(r => {
+        list = list.concat(getFilteredHostsByRegion(r));
+      });
       const rows = list.map((h, i) => {
         const r = pingResults[h.id];
         const status = r ? (r.online ? '정상(열림)' : '오프라인') : '미측정';
@@ -1579,7 +1676,7 @@
         const checkedAt = r ? (r.checkedAt || '') : '';
         return [
           i + 1,
-          h.region || '노원구',
+          inferRegion(h),
           status,
           h.name || '',
           h.host || '',

@@ -3,5 +3,7 @@ services:
     name: nowon-ddns-monitor
     runtime: python
     plan: free
+    branch: main
+    autoDeploy: true
     buildCommand: pip install -r requirements.txt
     startCommand: python server.py --no-browser
