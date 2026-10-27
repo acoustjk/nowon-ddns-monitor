@@ -5,31 +5,104 @@ import re
 import socket
 import subprocess
 import sys
+import threading
 import time
 import webbrowser
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, "hosts.json")
+LOG_FILE = os.path.join(BASE_DIR, "status_logs.json")
+STATE_FILE = os.path.join(BASE_DIR, "host_states.json")
 INDEX_FILE = os.path.join(BASE_DIR, "index.html")
 PORT = int(os.environ.get("PORT", 8765))
 
+# 한국 표준시 (KST, UTC+9) - 클라우드(Render 등) 서버에서도 항상 한국 시간으로 기록
+KST = timezone(timedelta(hours=9))
+MAX_LOG_ENTRIES = 2000
+STATE_LOCK = threading.Lock()
 
-def load_hosts():
-    if not os.path.exists(DATA_FILE):
-        return []
+
+def now_kst():
+    return datetime.now(KST)
+
+
+def now_str():
+    return now_kst().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def load_json_file(path, default_val):
+    if not os.path.exists(path):
+        return default_val
     try:
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
+        with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception:
-        return []
+        return default_val
+
+
+def save_json_file(path, data):
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
+def load_hosts():
+    return load_json_file(DATA_FILE, [])
 
 
 def save_hosts(hosts):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(hosts, f, ensure_ascii=False, indent=2)
+    save_json_file(DATA_FILE, hosts)
+
+
+def load_logs():
+    return load_json_file(LOG_FILE, [])
+
+
+def save_logs(logs):
+    save_json_file(LOG_FILE, logs[:MAX_LOG_ENTRIES])
+
+
+def load_states():
+    return load_json_file(STATE_FILE, {})
+
+
+def save_states(states):
+    save_json_file(STATE_FILE, states)
+
+
+def infer_region(item):
+    if item.get("region"):
+        return item.get("region")
+    host_str = str(item.get("host") or "").lower()
+    if (
+        "jungnang" in host_str
+        or "jrcctv" in host_str
+        or "jr3881" in host_str
+        or str(item.get("id") or "").startswith("jn-")
+    ):
+        return "중랑구"
+    return "노원구"
+
+
+def format_duration(seconds):
+    if seconds is None or seconds < 0:
+        return ""
+    seconds = int(seconds)
+    if seconds < 60:
+        return f"{seconds}초"
+    minutes, sec = divmod(seconds, 60)
+    if minutes < 60:
+        return f"{minutes}분 {sec}초" if sec else f"{minutes}분"
+    hours, minutes = divmod(minutes, 60)
+    if hours < 24:
+        return f"{hours}시간 {minutes}분"
+    days, hours = divmod(hours, 24)
+    return f"{days}일 {hours}시간"
 
 
 def parse_host_and_port(raw_host, explicit_port=None):
@@ -107,7 +180,7 @@ def check_single_host(item):
     raw_host = item.get("host", "")
     explicit_port = item.get("port")
     hostname, port = parse_host_and_port(raw_host, explicit_port)
-    checked_at = datetime.now().strftime("%H:%M:%S")
+    checked_at = now_kst().strftime("%H:%M:%S")
 
     if not hostname:
         return {
@@ -183,6 +256,134 @@ def check_single_host(item):
         }
 
 
+def update_states_and_logs(hosts_by_id, results):
+    """이전 상태와 비교하여 온라인<->오프라인 상태 전환 시 시각과 상세 내역을 로그로 기록합니다."""
+    now_dt = now_kst()
+    ts_full = now_dt.strftime("%Y-%m-%d %H:%M:%S")
+    epoch_now = now_dt.timestamp()
+
+    with STATE_LOCK:
+        states = load_states()
+        logs = load_logs()
+        new_logs = []
+
+        for host_id, res in results.items():
+            item = hosts_by_id.get(host_id, {})
+            cur_online = bool(res.get("online"))
+            prev = states.get(host_id)
+
+            region = infer_region(item)
+            name = item.get("name") or item.get("host") or host_id
+            host_addr = item.get("host") or ""
+            port = res.get("port") or item.get("port")
+
+            if prev is None:
+                # 최초 측정 시 상태 저장 (오프라인이면 최초 오프라인 감지 로그도 기록)
+                states[host_id] = {
+                    "online": cur_online,
+                    "changedAt": ts_full,
+                    "changedEpoch": epoch_now,
+                    "lastOnlineAt": ts_full if cur_online else None,
+                    "lastOfflineAt": None if cur_online else ts_full,
+                }
+                if not cur_online:
+                    new_logs.append({
+                        "id": f"log-{int(epoch_now*1000)}-{host_id}",
+                        "timestamp": ts_full,
+                        "event": "OFFLINE",
+                        "region": region,
+                        "name": name,
+                        "host": host_addr,
+                        "port": port,
+                        "ip": res.get("ip") or "-",
+                        "detail": f"초기 점검 오프라인 감지: {res.get('error') or '응답 없음'}",
+                    })
+            else:
+                prev_online = bool(prev.get("online"))
+                if prev_online != cur_online:
+                    # 상태 변경 발생! (정상 -> 오프라인 또는 오프라인 -> 정상 복구)
+                    prev_epoch = prev.get("changedEpoch")
+                    duration_str = format_duration(epoch_now - prev_epoch) if prev_epoch else ""
+
+                    if cur_online:
+                        detail = f"정상 복구 ({res.get('ms') or 1}ms)"
+                        if duration_str:
+                            detail += f" · 오프라인 지속시간: {duration_str}"
+                        event_type = "ONLINE"
+                    else:
+                        detail = f"연결 끊김: {res.get('error') or '응답 없음'}"
+                        if duration_str:
+                            detail += f" · 이전 정상 유지: {duration_str}"
+                        event_type = "OFFLINE"
+
+                    new_logs.append({
+                        "id": f"log-{int(epoch_now*1000)}-{host_id}",
+                        "timestamp": ts_full,
+                        "event": event_type,
+                        "region": region,
+                        "name": name,
+                        "host": host_addr,
+                        "port": port,
+                        "ip": res.get("ip") or "-",
+                        "detail": detail,
+                    })
+
+                    states[host_id] = {
+                        "online": cur_online,
+                        "changedAt": ts_full,
+                        "changedEpoch": epoch_now,
+                        "lastOnlineAt": ts_full if cur_online else prev.get("lastOnlineAt"),
+                        "lastOfflineAt": ts_full if not cur_online else prev.get("lastOfflineAt"),
+                    }
+                else:
+                    # 상태 동일 유지
+                    if cur_online:
+                        states[host_id]["lastOnlineAt"] = ts_full
+                    else:
+                        states[host_id]["lastOfflineAt"] = ts_full
+
+            # 결과 객체에 상태 변경 시각 정보 첨부
+            st = states[host_id]
+            res["statusChangedAt"] = st.get("changedAt")
+            res["lastOnlineAt"] = st.get("lastOnlineAt")
+            res["lastOfflineAt"] = st.get("lastOfflineAt")
+
+        if new_logs:
+            # 최신 로그가 맨 위에 오도록 앞에 추가
+            logs = new_logs + logs
+            save_logs(logs)
+
+        save_states(states)
+        return new_logs
+
+
+def run_ping_batch(target_ids=None):
+    hosts = load_hosts()
+    hosts_by_id = {h.get("id"): h for h in hosts if h.get("id")}
+    if target_ids:
+        id_set = set(target_ids)
+        targets = [h for h in hosts if h.get("id") in id_set]
+    else:
+        targets = hosts
+
+    results = {}
+    if targets:
+        max_workers = min(80, max(10, len(targets)))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_map = {executor.submit(check_single_host, h): h["id"] for h in targets}
+            for future in concurrent.futures.as_completed(future_map):
+                res = future.result()
+                results[res["id"]] = res
+
+    new_logs = update_states_and_logs(hosts_by_id, results)
+    return {
+        "ok": True,
+        "checkedAt": now_str(),
+        "results": results,
+        "newLogsCount": len(new_logs),
+    }
+
+
 def get_local_ip():
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
@@ -217,6 +418,8 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
         elif parsed.path == "/api/hosts":
             self._send_json({"hosts": load_hosts()})
+        elif parsed.path == "/api/logs":
+            self._send_json({"logs": load_logs()})
         else:
             self.send_error(404)
 
@@ -235,28 +438,15 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self._send_json({"ok": True, "hosts": hosts})
 
         elif parsed.path == "/api/ping":
-            hosts = load_hosts()
             target_ids = payload.get("ids")
-            if target_ids:
-                id_set = set(target_ids)
-                targets = [h for h in hosts if h.get("id") in id_set]
-            else:
-                targets = hosts
+            data = run_ping_batch(target_ids)
+            self._send_json(data)
 
-            results = {}
-            if targets:
-                max_workers = min(80, max(10, len(targets)))
-                with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-                    future_map = {executor.submit(check_single_host, h): h["id"] for h in targets}
-                    for future in concurrent.futures.as_completed(future_map):
-                        res = future.result()
-                        results[res["id"]] = res
+        elif parsed.path == "/api/logs/clear":
+            with STATE_LOCK:
+                save_logs([])
+            self._send_json({"ok": True, "logs": []})
 
-            self._send_json({
-                "ok": True,
-                "checkedAt": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "results": results,
-            })
         else:
             self.send_error(404)
 
@@ -271,6 +461,7 @@ def main():
     print(f" - 내 PC 접속 주소     : {local_url}")
     print(f" - 같은 네트워크(팀원) : {lan_url}")
     print(f" - 데이터 파일         : {DATA_FILE}")
+    print(f" - 상태 변경 로그 파일 : {LOG_FILE}")
     print(" (이 창을 닫으면 대시보드 서버가 종료됩니다)")
     print("=" * 64)
 
