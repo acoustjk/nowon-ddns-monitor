@@ -7,6 +7,7 @@ import subprocess
 import sys
 import threading
 import time
+import urllib.request
 import webbrowser
 from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -420,6 +421,10 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self._send_json({"hosts": load_hosts()})
         elif parsed.path == "/api/logs":
             self._send_json({"logs": load_logs()})
+        elif parsed.path == "/api/ping":
+            # GET 요청으로도 전체 측정 및 로그 기록 가능 (UptimeRobot / Cron 연동 및 Keep-Alive용)
+            data = run_ping_batch(None)
+            self._send_json(data)
         else:
             self.send_error(404)
 
@@ -451,8 +456,30 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.send_error(404)
 
 
+def background_monitor_loop(interval_sec=300):
+    """브라우저를 열어두지 않아도 백그라운드에서 5분마다 자동으로 전체 지점을 측정하고 상태 변경 로그를 기록합니다."""
+    time.sleep(3)
+    while True:
+        try:
+            run_ping_batch(None)
+            # Render 무료 플랜 절전 모드(15분 미접속 시 Sleep) 방지를 위한 외부 URL 호출
+            ext_url = os.environ.get("RENDER_EXTERNAL_URL") or (
+                "https://nowon-ddns-monitor.onrender.com" if os.environ.get("RENDER") else None
+            )
+            if ext_url:
+                req = urllib.request.Request(ext_url.rstrip("/") + "/api/hosts", method="GET")
+                with urllib.request.urlopen(req, timeout=10):
+                    pass
+        except Exception:
+            pass
+        time.sleep(interval_sec)
+
+
 def main():
     load_hosts()
+    monitor_thread = threading.Thread(target=background_monitor_loop, args=(300,), daemon=True)
+    monitor_thread.start()
+
     server = ThreadingHTTPServer(("0.0.0.0", PORT), DashboardHandler)
     local_url = f"http://127.0.0.1:{PORT}"
     lan_url = f"http://{get_local_ip()}:{PORT}"
@@ -462,6 +489,7 @@ def main():
     print(f" - 같은 네트워크(팀원) : {lan_url}")
     print(f" - 데이터 파일         : {DATA_FILE}")
     print(f" - 상태 변경 로그 파일 : {LOG_FILE}")
+    print(" - 백그라운드 자동감시 : 5분 주기로 75개 지점 자동 측정 및 로그 기록 중")
     print(" (이 창을 닫으면 대시보드 서버가 종료됩니다)")
     print("=" * 64)
 
